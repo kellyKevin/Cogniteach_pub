@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pre-Assessment</title>
+    <script>
+        function submitForm(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Gather all input values
+            let formData = {};
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => {
+                formData[input.name] = input.value;
+            });
+
+            // Add additional variables to the formData object
+            formData.exam = "{{ exam }}"; // Example variable
+            formData.topic = "{{ topic }}"; // Example variable
+            formData.syllabus = "{{ syllabus }}"; // Example variable
+            formData.classnum = "{{ classnum }}"; // Example variable
+            formData.info = "{{ info }}"; // Example variable
+            formData.teacher = "{{ teacher }}"
+            console.log(formData.teacher)
+
+            // Use the dynamically generated URL from Jinja templating
+            const submitUrl = "{{ submit_url }}";
+            
+            // Send data to the server
+            fetch(submitUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                // If redirection URL is sent back from the server, handle it here
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                } else {
+                    alert('Form submitted successfully!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Form submission failed!');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attach event listener to form
+            const form = document.querySelector('form');
+            form.addEventListener('submit', submitForm);
+        });
+    </script>
+</head>
+<body>
+    <p>Pre-Assessment</p>
+    <h1>{{ topic }}</h1>
+    <form>
+        {% for item in q %}
+            <label for="{{ item }}">{{ item }}</label>
+            <input type="text" name="{{ item }}" id="{{ item }}">
+            <br>
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
+

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Outline</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1E1E1E; /* Dark background */
+            color: #FFFFFF; /* White text color */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #222; /* Dark background for navbar */
+            padding: 10px 0;
+        }
+        .navbar-brand {
+            color: #70E72B; /* Greenish color for brand */
+            font-weight: normal;
+            font-size: 24px; /* Adjust font size */
+            text-align: center; /* Center the brand name */
+            width: 100%; /* Make the brand name occupy full width */
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #333; /* Dark gray background */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 5px;
+        }
+        button {
+            background-color: #70E72B; /* Greenish color */
+            color: #FFFFFF; /* White text color */
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #58BB1E; /* Darker greenish color on hover */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">COGNITEACH</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 id="topic">{{ topica }}</h1>
+        <h2>List of Questions for each class to be based on</h2>
+        <ul>
+            {% for element in qs %}
+            {% if element %}
+            <li>
+                <p>{{ element }}</p>
+                <a href="{{ url_for('session', topic=element ,info=info, teacher=teacher) }}"><button>Start from here</button></a>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+
+<script>
+    function getCookie(name) {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                return cookie.substring(name.length + 1);
+            }
+        }
+        return null;
+    }
+
+    var updatesessions = Number(getCookie("lessons")) + 1;
+    document.cookie = "lessons=" + updatesessions.toString() + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+
+    function setCookie(name, data, expires) {
+        var jsonData = JSON.stringify(data);
+        var cookieString = name + '=' + encodeURIComponent(jsonData) + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+        document.cookie = cookieString;
+    }
+
+    var topicData = {
+        topic: "{{ topica }}",
+        subtopics: {{ qs | tojson | safe }},
+        teacher: "{{teacher}}"
+    };
+    setCookie(updatesessions.toString(), topicData, 1000);
+</script>
+   </html>

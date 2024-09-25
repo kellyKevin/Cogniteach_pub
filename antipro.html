@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Screenshot</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+    <style>
+        /* CSS to hide the elements initially */
+        .hide {
+          display: none;
+        }
+        .display{
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Webcam Screenshot</h1>
+    <audio id="responseAudio" class="hide"></audio>
+    <video id="webcam" width="640" height="480" autoplay></video>
+    <button id="captureBtn">Start Lesson</button>
+    <input id="userResponse" class="hide">
+    <button id="send" class="hide">Send</button>
+    <input id="userResponse2" class="hide">
+    <button id="pause" class="hide">Respond</button>
+    <button id="startRecognizeOnceAsyncButton">Speech to text</button>
+    <div id="History" class="hide"></div>
+    <div id="responseContainer"></div>
+    <div id="board_writings_area"></div>
+    <div id="images_display" class="hide">
+        <img id="img1" height="300px" width="300px">
+        <img id="img2" height="300px" width="300px">
+        <img id="img3" height="300px" width="300px">
+    </div>
+    <script>
+            var phraseDiv;
+            var phraseDiv2;
+    var startRecognizeOnceAsyncButton=document.getElementById("startRecognizeOnceAsyncButton");
+
+    // subscription key and region for speech services.
+    var audioElement=document.getElementById("responseAudio")
+    var subscriptionKey, serviceRegion;
+    subscriptionKey = "8f0b068bc2f246509f2b26884bf739ee";
+    serviceRegion = "eastus";
+    var SpeechSDK;
+    var recognizer;
+
+    document.addEventListener("DOMContentLoaded", function () {
+      startRecognizeOnceAsyncButton = document.getElementById("startRecognizeOnceAsyncButton");
+      subscriptionKey = "8f0b068bc2f246509f2b26884bf739ee";
+      serviceRegion = "eastus";
+      phraseDiv = document.getElementById("userquery");
+      phraseDiv2 = document.getElementById("userResponse");
+      startRecognizeOnceAsyncButton.addEventListener("click", function () {
+        startRecognizeOnceAsyncButton.disabled = true;
+        phraseDiv.value = "";
+        phraseDiv2.value = "";
+
+        if (subscriptionKey.value === "" || subscriptionKey.value === "subscription") {
+          alert("Please enter your Microsoft Cognitive Services Speech subscription key!");
+          return;
+        }
+        var speechConfig = SpeechSDK.SpeechConfig.fromSubscription(subscriptionKey, serviceRegion);
+
+        speechConfig.speechRecognitionLanguage = "en-US";
+        var audioConfig  = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+        recognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
+
+        recognizer.recognizeOnceAsync(
+          function (result) {
+            startRecognizeOnceAsyncButton.disabled = false;
+            phraseDiv.value += result.text;
+            phraseDiv2.value += result.text;
+            window.console.log(result);
+
+            recognizer.close();
+            recognizer = undefined;
+          },
+          function (err) {
+            startRecognizeOnceAsyncButton.disabled = false;
+            phraseDiv.value += err;
+            phraseDiv2.value += result.text;
+            window.console.log(err);
+
+            recognizer.close();
+            recognizer = undefined;
+          });
+        })});
+
+      if (!!window.SpeechSDK) {
+        SpeechSDK = window.SpeechSDK;
+        startRecognizeOnceAsyncButton.disabled = false;
+      }
+        function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const video = document.getElementById('webcam');
+            const captureBtn = document.getElementById('captureBtn');
+            const responseContainer = document.getElementById('responseContainer');
+
+            // Get user media
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    video.srcObject = stream;
+                })
+                .catch((error) => {
+                    console.error('Error accessing webcam:', error);
+                });
+
+            // Capture button click event
+            captureBtn.addEventListener('click', () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const imageData = canvas.toDataURL('image/png');
+
+                // Send image data to the server
+                $.post('/capture', { image_data: imageData }, (response) => {
+                    console.log(response);
+                    var lol=JSON.stringify(response,null,2);
+                    var JSON_object=JSON.parse(lol);
+                    responseContainer.innerText = JSON_object.server_response;
+                    document.cookie = "mood=" + JSON_object.server_response + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+                });
+            });
+        });
+        sleep(4000);
+
+        function speakText(text) {
+        const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(subscriptionKey, serviceRegion);
+        const speechSynthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig);
+        speechConfig.speechSynthesisVoiceName = "en-US-EmmaNeural";
+
+        speechSynthesizer.speakTextAsync(
+            text,
+            result => {
+                speechSynthesizer.close();
+                const blob = new Blob([result.audioData], { type: 'audio/wav' });
+                const url = URL.createObjectURL(blob);
+                audioElement.src = url;
+            },
+            error => {
+                console.log(error);
+                speechSynthesizer.close();
+            }
+        );
+    }
+    function hideElement() {
+      var elementToHide1 = document.getElementById("captureBtn");
+      var elementToHide2 = document.getElementById("webcam");
+      var elementToHide3 = document.getElementById("responseContainer");
+      var element4 = document.getElementById("userResponse");
+      var element5 = document.getElementById("History");
+      var element6= document.getElementById("send");
+      var element7= document.getElementById("images_display")
+      var element8=document.getElementById("startRecognizeOnceAsyncButton")
+      elementToHide3.classList.toggle("hide");
+      element4.classList.toggle("display");
+      element5.classList.toggle("display");
+      element6.classList.toggle("display");
+      element7.classList.toggle("display");
+      element8.classList.toggle("display");
+      elementToHide1.remove();
+      elementToHide2.remove();
+    }
+    function getCookie(name) {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+              return cookie.substring(name.length + 1);
+            }
+          }
+          return null; 
+        }
+    
+    var name = getCookie("name");
+    var age = getCookie("age");
+    var academic = getCookie("academic");
+    var lang = getCookie("language");
+    var mood = getCookie("mood");
+    var state = getCookie("mentalstate");
+    var concept = getCookie("concept_rating");
+    var language= getCookie("lang_rating");
+    var history_container=document.getElementById("History");
+    var user_input=document.getElementById("userResponse");
+    var but=document.getElementById("captureBtn")
+    var user_input_send=document.getElementById("send")
+    var element8= document.getElementById("pause")
+    var element9= document.getElementById("userResponse2")
+    var element10=document.getElementById("startRecognizeOnceAsyncButton")
+    var images_display_array=[]
+    var image_index=-1
+    var img1=document.getElementById('img1')
+    var img2=document.getElementById('img2')
+    var img3=document.getElementById('img3')
+    var text_display_array=[]
+    var lecture_history=''
+    function displayImages(image_array){
+        console.log("images_selected")
+        img1.src=image_array[0][0]
+        img2.src=image_array[0][1]
+        img3.src=image_array[0][2]
+        console.log("images_displayed")
+    }
+    
+    function displayWordsInDiv(longString, maxWordsPerLine, targetDivId, intervalTime) {
+    const words = longString.split(' ');
+    let currentIndex = 0;
+    let paused = false;
+
+    // Function to add a line to the target div
+    function addWords() {
+        if (!paused && currentIndex < words.length) {
+            const paragraph = document.createElement('p');
+            paragraph.textContent = words.slice(currentIndex, currentIndex + maxWordsPerLine).join(' ');
+            document.getElementById(targetDivId).appendChild(paragraph);
+            currentIndex += maxWordsPerLine;
+        }
+    }
+
+    // Start the interval to add words
+    let intervalId;
+    function startInterval() {
+        intervalId = setInterval(addWords, intervalTime);
+    }
+
+    // Stop the interval
+    function stopInterval() {
+        clearInterval(intervalId);
+    }
+
+    // Toggle pause/resume
+    function togglePause() {
+        paused = !paused;
+    }
+
+    // Start adding words
+    startInterval();
+}
+    function query(){
+        let lecture_text=""
+        let display_response=document.createElement("p");
+        display_response.innerText=element9.value;
+        history_container.appendChild(display_response);
+        if (history_container.children.length > 0) {
+        const divElement = document.getElementById('History');
+        // Get all <p> tags within the div
+        const paragraphs = divElement.querySelectorAll('p');
+
+        // Initialize an empty string to store the concatenated text
+        lecture_history = '';
+
+        // Iterate over each paragraph
+        paragraphs.forEach((paragraph, index) => {
+            // Append the text of the paragraph to the concatenated string
+            lecture_history += paragraph.textContent.trim();
+            
+            // Add "|" separator if it's not the last paragraph
+            if (index < paragraphs.length - 1) {
+                lecture_history += ' | ';
+            }
+        });
+        console.log(lecture_history);}
+
+        
+            $.post('/lecture', {history:lecture_history,name:name,age:age,academic:academic,lang_rating:language,concept_rating:concept,topic:"{{topic}}"}, (response) => {
+                console.log(response);
+                var lol=JSON.stringify(response,null,2);
+                var JSON_object=JSON.parse(lol);
+                var answer=JSON_object.result;
+                speakText(answer)
+                console.log(answer)
+                var image_array=JSON_object.images
+                if(answer.includes("&")){displayImages(image_array)}
+                displayWordsInDiv(answer,12,"History",2000)
+            }
+        )};
+
+    function lecture_started(){
+        query()
+        $('#send').off('click');
+        element8.classList.toggle("display");
+        element9.classList.toggle("display"); 
+        user_input.remove() 
+        user_input_send.remove()
+        
+    }
+    function smalltalk(History){
+        let herstory=""
+        if (History==true){
+            let display_response=document.createElement("p");
+        display_response.innerText=user_input.value;
+        history_container.appendChild(display_response);
+        const divElement = document.getElementById('History');
+        // Get all <p> tags within the div
+        const paragraphs = divElement.querySelectorAll('p');
+
+        // Initialize an empty string to store the concatenated text
+        herstory = '';
+
+        // Iterate over each paragraph
+        paragraphs.forEach((paragraph, index) => {
+            // Append the text of the paragraph to the concatenated string
+            herstory += paragraph.textContent.trim();
+            
+            // Add "|" separator if it's not the last paragraph
+            if (index < paragraphs.length - 1) {
+                herstory += ' | ';
+            }
+        });
+        console.log(herstory);
+        }
+        $.post('/smalltalk', { name:name,age:age,mood:mood,mentalstate:state,history:herstory}, (response) => {
+                    console.log(response);
+                    var lol=JSON.stringify(response,null,2);
+                    var JSON_object=JSON.parse(lol);
+                    var display_response=document.createElement("p");
+                    display_response.innerText=JSON_object.result;
+                    history_container.appendChild(display_response);
+                    if (display_response.innerText.includes("[LECTURE STARTED]")){lecture_started()}
+                    else {speakText(JSON_object.result)}
+                });
+    }
+    but.addEventListener('click', hideElement);
+    but.addEventListener('click', function(){smalltalk(false)})
+    user_input_send.addEventListener('click',function(){smalltalk(true)})
+    element8.addEventListener('click',function(){query()})
+    </script>
+</body>
+</html>

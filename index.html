@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tutor - Personalized Learning with Cogniteach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://opinify-widget-w24d.vercel.app/widget.umd.js"></script>
+    <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
+    <link rel="icon" href="{{ url_for('static', filename='logo.ico') }}" type="image/x-icon">
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 0.1px solid rgba(128, 128, 128, 0.5);
+            margin-top: 4rem;
+            /* Space before the divider */
+            margin-bottom: 4rem;
+            /* Space after the divider */
+        }
+
+        /* Custom padding and margin for sections */
+        .section {
+            padding-top: 4rem;
+            /* Adjust as needed */
+            padding-bottom: 4rem;
+            /* Adjust as needed */
+        }
+
+        .text-justify {
+            text-align: justify;
+        }
+
+        .custom-width {
+            max-width: 800px;
+            /* Adjust as needed */
+        }
+
+        .card {
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            background-color: rgba(17, 25, 40, 0.75);
+            /* Make sure the background has some transparency */
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.125);
+        }
+
+        .title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 100px;
+            background-image: linear-gradient(43deg, #4158d0 0%, #c850c0 46%, #ffcc70 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+
+</head>
+
+<body class="bg-gray-900 text-white">
+    <!-- Navbar -->
+    <nav id="navbar"
+        class="sticky top-4 z-50 max-w-2xl mx-auto flex flex-wrap items-center justify-between px-6 py-4 bg-gray-800 bg-opacity-80 backdrop-filter backdrop-blur-md rounded-none md:rounded-full mt-8 transition-all duration-300">
+        <div class="flex items-center space-x-2">
+            <span class="font-bold text-xl title">Cogniteach</span>
+        </div>
+        <button id="menu-toggle" class="md:hidden text-white focus:outline-none">
+            <!-- Hamburger Icon -->
+            <svg id="hamburger-icon" class="w-6 h-6 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+            <!-- Cross Icon (hidden by default) -->
+            <svg id="cross-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <div id="menu"
+            class="hidden md:flex flex-col md:flex-row items-center space-x-0 md:space-x-8 w-full md:w-auto mt-4 md:mt-0 rounded-none ml-auto">
+            <a href="#features" class="text-white hover:text-gray-400 block py-2">Features</a>
+            <a href="#pricing" class="text-white hover:text-gray-400 block py-2">Pricing</a>
+            <a href="#contact" class="text-white hover:text-gray-400 block py-2">Contact</a>
+            <a href="{{ url_for('signup') }}"
+                class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700">Get
+                started free</a>
+            <a href="{{ url_for('signin') }}" class="text-white hover:text-gray-400">Sign in</a>
+        </div>
+    </nav>
+
+    <!-- Main Hero Section -->
+    <section class="flex flex-col items-center justify-center h-screen text-center bg-cover bg-center pb-24"
+        style="background-image: url('your-image-url.jpg');">
+        <div class="bg-gray-900 bg-opacity-60 px-8 py-16 rounded-xl">
+            <h1 class="text-4xl md:text-5xl font-bold leading-tight title">
+                <span class="typewriter-text"></span>
+            </h1>
+            <p class="mt-4 text-gray-400">Unleash your potential with tailored AI lessons. Start your journey today.</p>
+            <br>
+            <a href="#pricing"
+                class="mt-8 px-6 py-3 bg-blue-600 rounded-full text-white font-semibold hover:bg-blue-700">Start Free
+                Trial</a>
+        </div>
+        <!-- Wave Background SVG
+        <div class="absolute bottom-0 left-0 w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                <path fill="#E5E7EB" fill-opacity="1"
+                    d="M0,128L40,149.3C80,171,160,213,240,229.3C320,245,400,235,480,234.7C560,235,640,245,720,224C800,203,880,149,960,106.7C1040,64,1120,32,1200,48C1280,64,1360,128,1400,160L1440,192L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z">
+                </path>
+            </svg>
+        </div> -->
+    </section>
+
+    <!-- Features Section -->
+    <hr id="features" class="section-divider">
+    <section class="section bg-gray-900">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-3xl font-bold">What Our AI Tutor Can Do</h2>
+            <p class="mt-4 text-gray-400">Explore the intelligent features that make learning with AI more efficient and
+                fun.</p>
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 p-6 rounded-lg text-center min-h-[300px] flex flex-col items-center card">
+                    <!-- Real-Time Feedback SVG Icon -->
+                    <svg class="w-12 h-12 mb-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                        fill="currentColor" aria-hidden="true">
+                        <path
+                            d="M12 3C6.48 3 2 7.48 2 12c0 2.8 1.07 5.33 2.83 7.17L12 22l7.17-2.83C20.93 17.33 22 14.8 22 12c0-4.52-4.48-9-10-9zm-1 12h-2v-2h2v2zm0-4h-2V7h2v4zm3 4h-2v-2h2v2zm0-4h-2V7h2v4z" />
+                    </svg>
+                    <h3 class="text-xl font-semibold">Real-Time Feedback</h3>
+                    <p class="mt-4 text-gray-400 text-justify">Receive immediate, actionable feedback on your work, just
+                        like a tutor would. Our AI analyzes your input in real-time, helping you identify and correct
+                        mistakes instantly. This continuous feedback loop ensures you stay on track and make steady
+                        progress.</p>
+                    <a href="#" class="mt-6 inline-block bg-blue-500 text-white py-2 px-4 rounded">Learn
+                        More</a>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg text-center min-h-[300px] flex flex-col items-center card">
+                    <!-- Personalized Learning SVG Icon -->
+                    <svg class="w-12 h-12 mb-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                        fill="currentColor" aria-hidden="true">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12c0 4.34 2.5 8.06 6.06 9.65C8.09 20.52 8 19.77 8 19v-1.25c-1.52-.4-2.68-1.56-3.06-3.06V12c0-4.41 3.59-8 8-8s8 3.59 8 8v2.69c-.37 1.5-1.53 2.66-3.06 3.06V19c0 .77-.09 1.52-.06 2.65C21.5 20.06 24 16.34 24 12c0-5.52-4.48-10-10-10z" />
+                    </svg>
+                    <h3 class="text-xl font-semibold">Personalized Learning</h3>
+                    <p class="mt-4 text-gray-400 text-justify">AI adapts to your learning style to optimize each lesson
+                        for you. It tracks your progress and tailors future lessons based on your strengths and
+                        weaknesses, providing a customized learning experience that evolves with you.</p>
+                    <a href="#" class="mt-6 inline-block bg-blue-500 text-white py-2 px-4 rounded">Learn
+                        More</a>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg text-center min-h-[300px] flex flex-col items-center card">
+                    <!-- Emotional Support SVG Icon -->
+                    <svg class="w-12 h-12 mb-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                        fill="currentColor" aria-hidden="true">
+                        <path
+                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                    <h3 class="text-xl font-semibold">Emotional Support</h3>
+                    <p class="mt-4 text-gray-400 text-justify">Our AI understands when you're stressed and provides
+                        encouragement. It offers motivational messages and practical advice to help you stay positive
+                        and focused, ensuring a supportive learning environment.</p>
+                    <br>
+                    <a href="#" class="mt-6 inline-block bg-blue-500 text-white py-2 px-4 rounded">Learn
+                        More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Pricing Section -->
+    <hr id="pricing" class="section-divider">
+    <section class="section bg-gray-900">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-3xl font-bold">Choose Your Plan</h2>
+            <p class="mt-4 text-gray-400">Select the plan that suits your needs and start your learning journey.</p>
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Free Plan -->
+                <div class="bg-gray-800 p-6 rounded-lg text-center min-h-[400px] flex flex-col justify-between card">
+                    <h3 class="text-2xl font-semibold">Free</h3>
+                    <p class="mt-4 text-gray-400 text-xl">$0/month</p>
+                    <p class="mt-4 text-gray-400">Basic features to get started with AI tutoring.</p>
+                    <ul class="mt-4 text-gray-400 text-left list-disc list-inside">
+                        <li>Access to fundamental features</li>
+                        <li>Basic tutorials and support</li>
+                        <li>Limited customization options</li>
+                    </ul>
+                    <a href="{{ url_for('signup') }}"
+                        class="mt-8 px-6 py-3 bg-blue-600 rounded-full text-white font-semibold hover:bg-blue-700 block">Sign
+                        Up Now</a>
+                </div>
+                <!-- Pro Plan -->
+                <div class="bg-blue-600 p-6 rounded-lg text-center min-h-[400px] flex flex-col justify-between card">
+                    <h3 class="text-2xl font-semibold text-gray-200">Pro</h3>
+                    <p class="mt-4 text-gray-200 text-xl">$19/month</p>
+                    <p class="mt-4 text-gray-200">Advanced features and personalized coaching.</p>
+                    <ul class="mt-4 text-gray-200 text-left list-disc list-inside">
+                        <li>Everything in Free Plan</li>
+                        <li>Advanced analytics and reports</li>
+                        <li>Personalized learning plans</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <a href="{{ url_for('signup') }}"
+                        class="mt-8 px-6 py-3 bg-gray-800 rounded-full text-white font-semibold hover:bg-gray-900 block">Sign
+                        Up Now</a>
+                </div>
+                <!-- Premium Plan -->
+                <div class="bg-gray-800 p-6 rounded-lg text-center min-h-[400px] flex flex-col justify-between card">
+                    <h3 class="text-2xl font-semibold">Premium</h3>
+                    <p class="mt-4 text-gray-400 text-xl">$49/month</p>
+                    <p class="mt-4 text-gray-400">Complete access with priority support and extra features.</p>
+                    <ul class="mt-4 text-gray-400 text-left list-disc list-inside">
+                        <li>Everything in Pro Plan</li>
+                        <li>One-on-one coaching sessions</li>
+                        <li>Exclusive content and resources</li>
+                        <li>Extended customization options</li>
+                        <li>24/7 priority support</li>
+                    </ul>
+                    <a href="{{ url_for('signup') }}"
+                        class="mt-8 px-6 py-3 bg-blue-600 rounded-full text-white font-semibold hover:bg-blue-700 block">Sign
+                        Up Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- FAQ Accordion Section -->
+    <hr class="section-divider">
+    <section class="section bg-gray-900">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center">Frequently Asked Questions</h2>
+            <div class="mt-8">
+                <!-- FAQ 1 -->
+                <div class="bg-gray-800 rounded-lg card">
+                    <button class="w-full text-left px-6 py-4 focus:outline-none flex items-center justify-between"
+                        onclick="toggleAccordion(0)">
+                        <h3 class="font-semibold text-xl">What is Cogniteach AI?</h3>
+                        <svg class="w-5 h-5 transform rotate-0 transition-transform duration-300" id="arrow-0"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="px-6 pb-4 hidden" id="faq-0">
+                        <p class="text-gray-400">Cogniteach AI is a personalized AI tutor that adapts to your learning
+                            style and mood, offering real-time feedback and support.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="bg-gray-800 rounded-lg mt-4 card">
+                    <button class="w-full text-left px-6 py-4 focus:outline-none flex items-center justify-between"
+                        onclick="toggleAccordion(1)">
+                        <h3 class="font-semibold text-xl">How does it work?</h3>
+                        <svg class="w-5 h-5 transform rotate-0 transition-transform duration-300" id="arrow-1"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="px-6 pb-4 hidden" id="faq-1">
+                        <p class="text-gray-400">Our AI uses advanced algorithms to understand your learning behavior
+                            and provide adaptive lessons and real-time insights.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="bg-gray-800 rounded-lg mt-4 card">
+                    <button class="w-full text-left px-6 py-4 focus:outline-none flex items-center justify-between"
+                        onclick="toggleAccordion(2)">
+                        <h3 class="font-semibold text-xl">What plans are available?</h3>
+                        <svg class="w-5 h-5 transform rotate-0 transition-transform duration-300" id="arrow-2"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="px-6 pb-4 hidden" id="faq-2">
+                        <p class="text-gray-400">We offer Free, Pro, and Premium plans, each with varying features to
+                            suit different needs.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="bg-gray-800 rounded-lg mt-4 card">
+                    <button class="w-full text-left px-6 py-4 focus:outline-none flex items-center justify-between"
+                        onclick="toggleAccordion(3)">
+                        <h3 class="font-semibold text-xl">Can I switch plans later?</h3>
+                        <svg class="w-5 h-5 transform rotate-0 transition-transform duration-300" id="arrow-3"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="px-6 pb-4 hidden" id="faq-3">
+                        <p class="text-gray-400">Yes, you can switch between plans at any time through your account
+                            settings. The changes will be effective at the beginning of the next billing cycle.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="bg-gray-800 rounded-lg mt-4 card">
+                    <button class="w-full text-left px-6 py-4 focus:outline-none flex items-center justify-between"
+                        onclick="toggleAccordion(4)">
+                        <h3 class="font-semibold text-xl">Is there a free trial available?</h3>
+                        <svg class="w-5 h-5 transform rotate-0 transition-transform duration-300" id="arrow-4"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="px-6 pb-4 hidden" id="faq-4">
+                        <p class="text-gray-400">Yes, we offer a 7-day free trial for our Pro and Premium plans. You can
+                            start your trial anytime from the sign-up page.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 6 -->
+                <div class="bg-gray-800 rounded-lg mt-4 card">
+                    <button class="w-full text-left px-6 py-4 focus:outline-none flex items-center justify-between"
+                        onclick="toggleAccordion(5)">
+                        <h3 class="font-semibold text-xl">How can I contact support?</h3>
+                        <svg class="w-5 h-5 transform rotate-0 transition-transform duration-300" id="arrow-5"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="px-6 pb-4 hidden" id="faq-5">
+                        <p class="text-gray-400">You can contact our support team via email at support@cogniteach.com or
+                            through the live chat feature available on our website.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <hr id="contact" class="section-divider">
+    <section class="section bg-gray-900">
+        <div class="max-w-6xl mx-auto px-4 py-12">
+            <div class="custom-width mx-auto px-8 py-6 bg-gray-800 rounded-lg shadow-lg card">
+                <h2 class="text-2xl font-semibold text-white mb-4">Contact Us</h2>
+                <form>
+                    <div class="mb-4">
+                        <label class="block text-gray-300 mb-1" for="name">Your Name</label>
+                        <input
+                            class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300"
+                            placeholder="Enter your name" type="text" id="name" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-300 mb-1" for="email">Your Email</label>
+                        <input
+                            class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300"
+                            placeholder="Enter your email" name="email" id="email" type="email" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-300 mb-1" for="message">Your Message</label>
+                        <textarea
+                            class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300"
+                            rows="4" placeholder="Enter your message" name="message" id="message"></textarea>
+                    </div>
+                    <button
+                        class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300"
+                        type="submit">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Feedback Widget -->
+    <div style="position: fixed; bottom: 15px; right: 15px">
+        <widget-web-component projectid="cm16gyi200001cp0w9cq79uzp"></widget-web-component>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-16 py-8 text-center">
+        <div class="text-gray-400">
+            <a href="#" class="hover:underline">Terms of Service</a> |
+            <a href="#" class="hover:underline">Privacy Policy</a> |
+            <a href="#" class="hover:underline">Support</a>
+        </div>
+        <div class="mt-4">
+            <p class="text-sm">&copy; 2024 Cogniteach AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Menu and FAQ Accordion -->
+    <script>
+        const typewriter = (element, text, speed) => {
+            let i = 0;
+            const typingEffect = () => {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typingEffect, speed);
+                }
+            };
+            typingEffect();
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const headingElement = document.querySelector(".typewriter-text");
+            typewriter(headingElement, "Discover AI-Powered Learning", 100, 200); // Adjust speed and delay as needed
+        });
+
+
+        document.getElementById('menu-toggle').addEventListener('click', () => {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+        });
+
+
+        function toggleAccordion(index) {
+            const content = document.getElementById(`faq-${index}`);
+            const arrow = document.getElementById(`arrow-${index}`);
+            const isHidden = content.classList.contains('hidden');
+
+            // Hide all content and reset all arrows
+            document.querySelectorAll('.bg-gray-800 > .hidden').forEach(div => div.classList.add('hidden'));
+            document.querySelectorAll('svg').forEach(icon => icon.classList.remove('rotate-180'));
+
+            // Toggle current content and arrow
+            if (isHidden) {
+                content.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+            }
+        }
+
+        // ScrollReveal Animations
+        ScrollReveal().reveal('.bg-gray-900.bg-opacity-60', {
+            duration: 2000,
+            origin: 'top',
+            distance: '50px'
+        });
+
+        ScrollReveal().reveal('.bg-gray-800.p-6', {
+            duration: 1500,
+            origin: 'bottom',
+            distance: '30px',
+            interval: 200
+        });
+
+        ScrollReveal().reveal('.bg-gray-800 > button', {
+            duration: 1500,
+            origin: 'bottom',
+            distance: '20px',
+            interval: 200,
+            opacity: 0
+        });
+    </script>
+</body>
+
+</html>

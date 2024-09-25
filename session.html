@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session</title>
+    <script src="{{ url_for('static', filename='avataaars.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/roughjs@4.5.2/bundled/rough.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <link type="text/css"rel="stylesheet"href="https://cdn.jsdelivr.net/npm/jsmind@0.8.5/style/jsmind.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/microsoft-cognitiveservices-speech-sdk@latest/distrib/browser/microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsmind@0.8.5/es6/jsmind.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsmind@0.8.5/es6/jsmind.draggable-node.js"></script>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+         #jsmind_container {
+                width: 600px;
+                height: 500px;
+                border: solid 1px #ccc;
+                background: #f4f4f4;
+            }
+        #body {
+        width: 1200px;
+        margin: 0 auto;
+        position: relative;
+      }
+      
+      rect {
+        fill: none;
+        pointer-events: all;
+      }
+      
+      pre {
+        font-size: 18px;
+      }
+      
+      line {
+        stroke: #0E0;
+        stroke-width: 1.5px;
+      }
+      
+      .string, .regexp {
+        color: #f39;
+      }
+      
+      .keyword {
+        color: #00c;
+      }
+      
+      .comment {
+        color: #777;
+        font-style: oblique;
+      }
+      
+      .number {
+        color: #369;
+      }
+      
+      .class, .special {
+        color: #1181B8;
+      }
+      
+      a:link, a:visited {
+        color: steelblue;
+        text-decoration: none;
+      }
+      
+      a:hover {
+        color: #666;
+      }
+      
+      
+      
+      .node circle {
+        cursor: pointer;
+        fill: #fff;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+      }
+      
+      .node text {
+        font-size: 12px;
+      }
+      
+      path.link {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 2.0px;
+      }
+    
+      body {
+    background-color: #1e1e1e; /* Dark but not pitch black background */
+}
+
+      #interaction_container {
+            width: 500px;      /* Set the desired width */
+            height: 600px;     /* Set the desired height */
+            background-color: #292929; /* Dark greenish background */
+            color: white;      /* White text color */
+            border-radius: 15px; /* Rounded corners */
+            padding: 20px;     /* Optional padding */
+            box-sizing: border-box; /* Ensure padding doesn't affect the total size */
+            outline: 2px solid #50C878; /* Outline color and thickness */
+            position: fixed;       /* Fixed positioning */
+            right: 0;              /* Align to the right side */
+            top: 50%;              /* Center vertically */
+            transform: translateY(-50%); /* Adjust vertical center */
+            
+        }
+        #userInput {
+    position: absolute;    /* Absolute positioning relative to the container */
+    bottom: 10px;          /* Align to the bottom with a 10px margin */
+    left: 20px;            /* Optional left margin */
+    right: 20px;           /* Optional right margin */
+    display: flex;
+    align-items: center;
+}
+
+#userResponse {
+    flex: 1;
+    height: 50px;          /* Set the desired height */
+    padding: 0 10px;       /* Adjust padding to fit the height */
+    border-top-left-radius: 10px;     /* Rounded top-left corner */
+    border-bottom-left-radius: 10px;  /* Rounded bottom-left corner */
+    background-color: #292929; /* Gray background */
+    border: 2px solid #358f53; /* Teal outline */
+    border-right: none;       /* Remove the right border */
+    box-sizing: border-box;  /* Include padding and border in height calculation */
+    font-size: 16px;         /* Font size for the input text */
+    color: #eceaea;          /* Text color */
+    margin-right: -2px;      /* Overlap the border with the next element */
+}
+
+#userResponse:focus {
+    outline: none;           /* Remove default outline on focus */
+    border-color: #7df5a5;   /* Change outline color on focus if desired */
+}
+
+#userSpeechToText {
+    width: 50px;               /* Set the desired width */
+    height: 50px;              /* Set the desired height */
+    background-color: #358f53; /* Teal background */
+    color: white;              /* White icon color */
+    border: 2px solid #358f53; /* Same border as input */
+    border-top-right-radius: 10px;  /* Rounded top-right corner */
+    border-bottom-right-radius: 10px; /* Rounded bottom-right corner */
+    display: flex;             /* Center the icon */
+    justify-content: center;   /* Center the icon */
+    align-items: center;       /* Center the icon */
+    cursor: pointer;           /* Pointer cursor on hover */
+    font-size: 20px;           /* Icon size */
+    outline: none;             /* Remove default outline */
+    box-sizing: border-box;    /* Include padding and border in height calculation */
+    margin-right: 10px;        /* Space between the buttons */
+}
+
+#userSpeechToText:hover {
+    background-color: #2c613d; /* Slightly darker teal on hover */
+}
+
+#userSubmit {
+    width: 50px;               /* Set the desired width */
+    height: 50px;              /* Set the desired height */
+    background-color: #358f53; /* Teal background */
+    color: white;              /* White icon color */
+    border: none;              /* Remove default border */
+    border-radius: 50%;        /* Completely rounded */
+    display: flex;             /* Center the icon */
+    justify-content: center;   /* Center the icon */
+    align-items: center;       /* Center the icon */
+    cursor: pointer;           /* Pointer cursor on hover */
+    font-size: 20px;           /* Icon size */
+    outline: none;             /* Remove default outline */
+}
+
+#userSubmit:hover {
+    background-color: #2c613d; /* Slightly darker teal on hover */
+}
+#images_container {
+    display: flex;
+    gap: 20px; /* Space between images */
+}
+
+.rounded-image {
+    width: 150px; /* Set the desired width */
+    height: 150px; /* Set the desired height */
+    border-radius: 15px; /* Rounded edges */
+    border: 2px solid #358f53; /* Outline color */
+    object-fit: cover; /* Ensure the image covers the container without distortion */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+#history_container{overflow-y: scroll;
+    height: 400px; /* Set the desired height for the scrollable container */}
+#whiteboard{overflow-y: scroll;overflow-x: scroll;background-color: #f4f4f4;border-radius: 15px; /* Rounded edges */
+    border: 2px solid #358f53;}
+#container{height: 100px;width: 100px;}
+.hide{
+    display:none;
+}
+    </style>
+</head>
+<body>
+    <div style="overflow-y: scroll;overflow-x: scroll; height: 600px;width: 800px;">
+    <canvas id="whiteboard" width="1000" height="1000"></canvas>
+    </div>
+    <div id="container"></div>
+    <audio id="audio" class="hide"></audio>
+    <div id="interaction_container">
+        <div id="userInput">
+            <input placeholder="Enter response here...." id="userResponse">
+            <button id="userSpeechToText"><i class="fas fa-microphone"></i></button>
+            <button id="userSubmit"><i class="fas fa-paper-plane"></i></button>
+        </div>
+        <div id="history_container"></div>
+    </div>
+    <div id="notes_container"><p id="notes"></p></div>
+    <div id="images_container">
+        <img id="image1" src="" alt="{{ url_for('static', filename='logo.jpeg') }}" class="rounded-image">
+        <img id="image2" src="" alt="{{ url_for('static', filename='logo.jpeg') }}" class="rounded-image">
+        <img id="image3" src="" alt="{{ url_for('static', filename='logo.jpeg') }}" class="rounded-image">
+    </div>
+    <img id="avatar" height="200" width="200">
+    <div id="jsmind_container"></div>
+    <video id="webcam" autoplay></video>
+
+    <script type="module">
+
+    import AudioMotionAnalyzer from 'https://cdn.skypack.dev/audiomotion-analyzer';
+        function getCookie(name) {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    return cookie.substring(name.length + 1);
+                }
+            }
+            return null; 
+        }
+
+        function displayImages(str){
+            const urls = str.split('}');
+            const image1 = document.getElementById('image1');
+            const image2 = document.getElementById('image2');
+            const image3 = document.getElementById('image3');
+            image1.src = urls[0];
+            image2.src = urls[1];
+            image3.src = urls[2];
+        }
+
+        function removeStrongTags(text) {return text.replace(/<\/?strong>/g, "");}
+
+        function update_avatar(eye,brow,mouth,person){
+            
+        // Create the avatar SVG using Avataaars
+        var svg = Avataaars.create({
+            eyes: eye,
+            eyebrows: brow,
+            mouth: mouth,
+        });
+
+        // Convert the SVG string to a data URL
+        var svgDataUrl = 'data:image/svg+xml;base64,' + btoa(svg);
+
+        // Set the src attribute of the img element to the SVG data URL
+        document.getElementById('avatar').src = svgDataUrl;
+        }
+        
+        var name = getCookie("name");
+        var total_history=""
+        var age = getCookie("age");
+        var academic = getCookie("academic");
+        var lang = getCookie("language");
+        var mood = getCookie("mood");
+        var state = getCookie("mentalstate");
+        var concept = getCookie("concept_rating");
+        var attention= getCookie("attention");
+        var language= getCookie("lang_rating");
+        var history_container=document.getElementById("history_container");
+        var notes_container=document.getElementById("notes_container");
+        var questions_container=document.getElementById("questions_container");
+        var images_container=document.getElementById("images_container");
+        var userResponse=document.getElementById("userResponse");
+        var userSubmit=document.getElementById("userSubmit");
+        var userSpeechToText=document.getElementById("userSpeechToText");
+        var video = document.getElementById('webcam');
+        var jm; // Global variable for jsMind instance
+        var mind = { meta: {name: 'demo',author: 'hizzgdev@163.com',version: '0.2',},
+            format: 'node_array',
+            data: [
+            { id: '{{topic}}', isroot: true, topic: '{{topic}}' }
+            ]};
+        const subscriptionKey = "8f0b068bc2f246509f2b26884bf739ee";
+        const serviceRegion = "eastus";
+// Create a SpeechConfig instance with subscription key and region
+const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(subscriptionKey, serviceRegion);
+
+// Create a SpeechSynthesizer instance without automatic playback
+const synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, null); // `null` avoids auto play
+        const accent = decideSpeaker("{{teacher}}");
+        let canvas = document.getElementById('whiteboard');
+        let ctx = canvas.getContext('2d');
+        let rc = rough.canvas(canvas);
+        const audioElement=document.getElementById('audio');
+        const container=document.getElementById('container');
+
+        const audioMotion = new AudioMotionAnalyzer( container, {
+  source: audioElement,
+  mode: 3,
+  alphaBars: true,
+  fsElement: container,
+  gradient: 'prism',
+  linearAmplitude: true,
+  linearBoost: 1.8,
+  radial: true,
+  showPeaks: false,
+  weightingFilter: 'D',
+  onCanvasDraw: instance => {
+    instance.radius = .3 + instance.getEnergy();
+  }
+});
+
+        // Function to clear the whiteboard
+        function clearWhiteboard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            rc = rough.canvas(canvas);  // Re-initialize Rough.js context
+        }
+
+        // Function to draw a rectangle and place auto-wrapped text inside it with dynamic font size
+        function drawRectangleWithText({ x, y, width, height, text, shapeOptions = {}, textOptions = {} }) {
+            if (!validateParams(x, y, width, height, text)) return;
+            // Draw the rectangle using Rough.js
+            rc.rectangle(x, y, width, height, shapeOptions);
+
+            // Set text options and handle edge cases
+            drawTextInsideShape({ x, y, width, height, text, textOptions });
+
+            // Return the rectangle's properties for further use
+            return { x, y, width, height };
+        }
+
+        // Function to draw an ellipse and place auto-wrapped text inside it with dynamic font size
+        function drawEllipseWithText({ x, y, width, height, text, shapeOptions = {}, textOptions = {} }) {
+            if (!validateParams(x, y, width, height, text)) return;
+            // Draw the ellipse using Rough.js
+            rc.ellipse(x + width / 2, y + height / 2, width, height, shapeOptions);
+
+            // Set text options and handle edge cases
+            drawTextInsideShape({ x, y, width, height, text, textOptions });
+
+            // Return the ellipse's properties for further use
+            return { x, y, width, height };
+        }
+
+        // Function to handle text wrapping and auto font resizing with fallback for edge cases
+        function drawTextInsideShape({ x, y, width, height, text, textOptions = {} }) {
+    if (!text || typeof text !== 'string') {
+        text = "Invalid text input";  // Fallback text
+    }
+
+    const {
+        font = 'Arial',
+        color = 'black',
+        minFontSize = 10,
+        maxFontSize = 20,
+        padding = 10
+    } = textOptions;
+
+    let fontSize = maxFontSize;
+    let lineHeight = fontSize * 1.2;
+    ctx.font = `${fontSize}px ${font}`;
+    ctx.fillStyle = color;
+
+    const words = text.split(" ");
+    let lines = [];
+    let line = "";
+
+    function wrapText(currentFontSize) {
+        ctx.font = `${currentFontSize}px ${font}`;
+        lines = [];
+        line = "";
+
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + " ";
+            const testWidth = ctx.measureText(testLine).width;
+            if (testWidth > width - padding * 2) {
+                lines.push(line);
+                line = words[i] + " ";
+            } else {
+                line = testLine;
+            }
+        }
+        lines.push(line);
+        return lines;
+    }
+
+    // Adjust font size to fit inside the shape
+    while (fontSize >= minFontSize) {
+        lines = wrapText(fontSize);
+        const totalHeight = lines.length * lineHeight;
+
+        if (totalHeight <= height - padding * 2) {
+            break;
+        }
+
+        fontSize--;
+        lineHeight = fontSize * 1.2;
+    }
+
+    if (fontSize < minFontSize) {
+        fontSize = minFontSize;
+        lineHeight = fontSize * 1.2;
+        lines = wrapText(minFontSize);
+    }
+
+    // Center the text horizontally and vertically
+    const totalTextHeight = lines.length * lineHeight;
+    let startY = y + (height - totalTextHeight) / 2 + lineHeight;
+    const centerX = x + width / 2;
+
+    if (lines.length === 0 || startY > y + height - padding) {
+        ctx.fillText("Text too large to fit", centerX, y + padding + lineHeight);
+        return;
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+        const textWidth = ctx.measureText(lines[i]).width;
+        const textX = centerX - textWidth / 2; // Center the text horizontally
+        if (startY < y + height - padding) {
+            ctx.fillText(lines[i], textX, startY); // Draw each line centered
+            startY += lineHeight;
+        } else {
+            break;
+        }
+    }
+}
+
+        // Function to validate input parameters and handle edge cases
+        function validateParams(x, y, width, height, text) {
+            if (typeof x !== 'number' || typeof y !== 'number' || typeof width !== 'number' || typeof height !== 'number') {
+                console.error("Invalid shape dimensions.");
+                return false;
+            }
+            if (!text || typeof text !== 'string') {
+                console.error("Invalid or missing text.");
+                return false;
+            }
+            return true;
+        }
+
+        // Function to draw a line between two shapes with optional arrowhead
+        // Function to calculate the point on the edge of a rectangle that is closest to another point
+function getClosestPointOnRect(rect, point) {
+    let closestX = Math.max(rect.x, Math.min(point.x, rect.x + rect.width));
+    let closestY = Math.max(rect.y, Math.min(point.y, rect.y + rect.height));
+    return { x: closestX, y: closestY };
+}
+
+// Function to calculate the point on the edge of an ellipse that is closest to another point
+function getClosestPointOnEllipse(ellipse, point) {
+    let rx = ellipse.width / 2;
+    let ry = ellipse.height / 2;
+    let cx = ellipse.x + rx;
+    let cy = ellipse.y + ry;
+
+    // Calculate the angle between the ellipse center and the point
+    let angle = Math.atan2(point.y - cy, point.x - cx);
+
+    // Calculate the point on the ellipse's edge at that angle
+    let closestX = cx + rx * Math.cos(angle);
+    let closestY = cy + ry * Math.sin(angle);
+
+    return { x: closestX, y: closestY };
+}
+
+// Function to draw a line between two shapes, connecting from the bounds of the shapes
+function drawLineBetweenShapes(shape1, shape2, lineOptions = {},arrow=false) {
+    let point1, point2;
+
+    // Determine the type of the shape and calculate the closest points on the edges
+    if (shape1.width && shape1.height) {
+        point1 = getClosestPointOnRect(shape1, { x: shape2.x + shape2.width / 2, y: shape2.y + shape2.height / 2 });
+    } else {
+        point1 = getClosestPointOnEllipse(shape1, { x: shape2.x + shape2.width / 2, y: shape2.y + shape2.height / 2 });
+    }
+
+    if (shape2.width && shape2.height) {
+        point2 = getClosestPointOnRect(shape2, { x: shape1.x + shape1.width / 2, y: shape1.y + shape1.height / 2 });
+    } else {
+        point2 = getClosestPointOnEllipse(shape2, { x: shape1.x + shape1.width / 2, y: shape1.y + shape1.height / 2 });
+    }
+
+    // Draw the line connecting the closest points
+    rc.line(point1.x, point1.y, point2.x, point2.y, lineOptions);
+
+    // Draw arrow if specified
+    if (arrow) {
+        drawArrowhead(point1.x, point1.y, point2.x, point2.y, lineOptions);
+    }
+}
+
+// Function to draw an arrowhead at the end of the line
+function drawArrowhead(x1, y1, x2, y2, lineOptions) {
+    const arrowLength = 10;
+    const arrowWidth = 5;
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+
+    // Calculate the points for the arrowhead
+    const arrowPoint1 = {
+        x: x2 - arrowLength * Math.cos(angle - Math.PI / 6),
+        y: y2 - arrowLength * Math.sin(angle - Math.PI / 6)
+    };
+
+    const arrowPoint2 = {
+        x: x2 - arrowLength * Math.cos(angle + Math.PI / 6),
+        y: y2 - arrowLength * Math.sin(angle + Math.PI / 6)
+    };
+
+    // Draw the arrowhead using canvas context
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(arrowPoint1.x, arrowPoint1.y);
+    ctx.lineTo(arrowPoint2.x, arrowPoint2.y);
+    ctx.closePath();
+    ctx.fillStyle = lineOptions.stroke || 'black';
+    ctx.fill();
+}
+
+function doWhiteboardStuff(code) {
+            try {
+                eval(code);
+            } catch (error) {
+                console.error("Error executing code:", error);
+            }
+}
+
+
+
+        function speakAndDisplayText(text, wordsPerMinute, displayElement) {
+            const words = text.split(' ');
+            const msPerWord = (60 / wordsPerMinute) * 1000;
+
+            speakText(text);
+
+            let currentWordIndex = 0;
+            const interval = setInterval(function () {
+                if (currentWordIndex < words.length) {
+                    const word = words[currentWordIndex];
+                    displayElement.innerHTML += ' ' + word;
+                    currentWordIndex++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, msPerWord);
+        }
+
+        function decideSpeaker(name) {
+            if (name === "Aiko") {
+                return "en-HK-YanNeural";
+            }
+            if (name === "Amara") {
+                return "en-NG-EzinneNeural";
+            }
+            if (name === "Diego") {
+                return "en-US-KevinNeural";
+            }
+            if (name === "Elara") {
+                return "en-US-SaraNeural";
+            }
+            if (name === "Lena ") {
+                return "en-US-CoraNeural";
+            }
+            
+        }
+        function decideRate(name) {
+            if (name === "Aiko") {
+                return 120;
+            }
+            if (name === "Amara") {
+                return "en-NG-EzinneNeural";
+            }
+            if (name === "Diego") {
+                return "en-US-KevinNeural";
+            }
+            if (name === "Elara") {
+                return "en-US-SaraNeural";
+            }
+            if (name === "Lena ") {
+                return "en-US-CoraNeural";
+            }
+            
+        }
+
+        async function speakText(text) {
+    // Start the synthesis
+    synthesizer.speakTextAsync(
+        removeStrongTags(text),
+        result => {
+            if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
+                console.log('Synthesis finished.');
+                
+                // Get the existing audio element
+                
+                if (!audioElement) {
+                    console.error('Audio element not found.');
+                    return;
+                }
+                
+                // Create a blob URL from the audio data
+                const audioBlob = new Blob([result.audioData], { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                
+                // Set the src of the audio element (without auto-playing it)
+                audioElement.src = audioUrl;
+
+                // Optionally, automatically play the audio element:
+                audioElement.play();
+
+                // Clean up the object URL after a short delay
+                setTimeout(() => URL.revokeObjectURL(audioUrl), 5000);
+                audioElement.onended = function() {
+                    audioElement.src = "";
+                    console.log('Audio finished playing and src is cleared.');
+                };
+            } else {
+                console.error('Synthesis failed: ', result.errorDetails);
+            }
+        },
+        error => {
+            console.error('Error occurred: ', error);
+            
+        }
+    );
+}
+
+
+        function query(){
+            let lecture_text="";
+            var heading=document.createElement("h4");
+            var notes_p=document.getElementById('notes');
+            heading.innerText=name +" :";
+            let display_response=document.createElement("p");
+            display_response.innerText=userResponse.value;
+            display_response.style.backgroundColor="#3296C5";
+            history_container.appendChild(heading);
+            history_container.appendChild(display_response);
+            if (history_container.children.length > 0) {
+                const divElement = document.getElementById('history_container');
+                const paragraphs = divElement.querySelectorAll('p');
+                var lecture_history = '';
+
+                paragraphs.forEach((paragraph, index) => {
+                    lecture_history += paragraph.textContent.trim();
+                    if (index < paragraphs.length - 1) {
+                        lecture_history += ' | ';
+                    }
+                });
+                console.log(lecture_history);
+            }
+            
+            $.post('/lecture', {history2:total_history,history:lecture_history,name:name,age:age,academic:academic,lang_rating:language,concept_rating:concept,topic:"{{topic}}",points:'{{points}}',info:"{{info}}",teacher:"{{teacher}}",mood:getCookie("mood"),eyegaze:getCookie("direction")}, (response) => {
+                console.log(response);
+                var JSON_object=JSON.parse(JSON.stringify(response,null,2));
+                var answer=JSON_object.text;
+                var board_drawings=JSON_object.board_drawings
+                console.log(board_drawings)
+                console.log(answer);
+
+                doWhiteboardStuff(board_drawings);
+                var heading=document.createElement("h4");
+                heading.innerText="{{teacher}} :";
+                history_container.appendChild(heading);
+                var text=document.createElement("p");
+                history_container.appendChild(text);
+
+                var text_speech =JSON_object.text;
+                var wordsPerMinute = 190;
+                speakAndDisplayText(text_speech, decideRate("{{teacher}}"),text);
+                total_history=JSON_object.text+"|"+JSON_object.board_drawings+"|";
+
+
+                $.post("/images",{text:answer}, (response) => {
+                console.log("img ok")
+                var JSON_object=JSON.parse(JSON.stringify(response,null,2));
+                var image_array=JSON_object.img_urls;
+                displayImages(image_array);
+                console.log("images_done")
+                });
+                
+                $.post("/avatar",{text:answer}, (response) => {
+                console.log("avatar ok")
+                var JSON_object=JSON.parse(JSON.stringify(response,null,2));
+                var exp_array=JSON_object.exp;
+                update_avatar(exp_array[0],exp_array[1],exp_array[2],"{{teacher}}");
+                console.log("avatar_done")
+                });
+
+                $.post("/notes",{text:answer,notes:notes_p.innerText}, (response) => {
+                console.log("notes ok")
+                var JSON_object=JSON.parse(JSON.stringify(response,null,2));
+                notes_p.innerText=JSON_object.notes;
+                console.log("notes_done")
+                });
+
+                $.post("/map",{text:answer,json_data:getReadableMindMap()}, (response) => {
+                    var JSON_object=JSON.parse(JSON.stringify(response,null,2));
+                    console.log(JSON_object.node)
+                    console.log(JSON_object.parent)
+                    addNode(JSON_object.node,JSON_object.parent);
+                });
+            });
+
+        }
+        userSubmit.addEventListener('click', query);
+
+        function initializeSpeechToText(subscriptionKey, serviceRegion, inputElement, buttonElement) {
+            const speechSdk = window.SpeechSDK;
+            if (!speechSdk) {
+                console.error('Speech SDK is not loaded');
+                return;
+            }
+            const speechConfig = speechSdk.SpeechConfig.fromSubscription(subscriptionKey, serviceRegion);
+            const audioConfig = speechSdk.AudioConfig.fromDefaultMicrophoneInput();
+            speechConfig.speechSynthesisVoiceName = decideSpeaker("{{teacher}}"); 
+            const recognizer = new speechSdk.SpeechRecognizer(speechConfig, audioConfig);
+
+            buttonElement.addEventListener('click', function() {
+                recognizer.recognizeOnceAsync(result => {
+                    inputElement.value = result.text;
+                    recognizer.close();
+                }, err => {
+                    console.error(err);
+                    recognizer.close();
+                });
+            });
+        }
+        initializeSpeechToText(subscriptionKey, serviceRegion, userResponse, userSpeechToText);
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+                setInterval(captureAndSendImage, 10000);
+            })
+            .catch((error) => {
+                console.error('Error accessing webcam:', error);
+            });
+
+        function captureAndSendImage() {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/png');
+
+            fetch('/capture', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    image_data: imageData
+                }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.direction) {
+                    console.log(data.direction);
+                    console.log(data.emotion);
+                    var prev=getCookie("direction");
+                    document.cookie = "mood=" + data.emotion + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+                    document.cookie = "direction=" +prev+"."+ data.direction + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+                } else {
+                    console.error('Error:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        function load_jsmind() {
+            var options = {
+                container: 'jsmind_container',
+                editable: true,
+                theme: 'primary',
+            };
+            jm = new jsMind(options);
+            jm.show(mind);
+        }
+        
+        
+        function addNode(name, parentName) {
+            // Helper function to calculate string similarity (Levenshtein distance)
+            function getEditDistance(a, b) {
+                if (!a || !b) return (a || b).length;
+                var m = [];
+                for (var i = 0; i <= b.length; i++) {
+                    m[i] = [i];
+                    if (i === 0) continue;
+                    for (var j = 0; j <= a.length; j++) {
+                        m[0][j] = j;
+                        if (j === 0) continue;
+                        m[i][j] = b.charAt(i - 1) === a.charAt(j - 1) ?
+                            m[i - 1][j - 1] :
+                            Math.min(
+                                m[i - 1][j - 1] + 1,
+                                m[i][j - 1] + 1,
+                                m[i - 1][j] + 1
+                            );
+                    }
+                }
+                return m[b.length][a.length];
+            }
+
+            // Find the parent node with the most similar name
+            var parentNode = mind.data.reduce((prev, curr) => {
+                var currDistance = getEditDistance(curr.topic.toLowerCase(), parentName.toLowerCase());
+                return (prev === null || currDistance < prev.distance) ? { node: curr, distance: currDistance } : prev;
+            }, null).node;
+
+            if (!parentNode) {
+                console.error('Parent node not found');
+                return;
+            }
+
+            var parentId = parentNode.id;
+
+            // Generate a new unique id for the new node
+            var newId = 'node_' + (new Date().getTime()); // Simple unique id generation
+
+            // Add the new node to mind.data
+            mind.data.push({
+                id: newId,
+                parentid: parentId,
+                topic: name,
+            });
+
+            // Refresh the mind map
+            jm.show(mind);
+        }
+
+
+        function getReadableMindMap() {
+            var rootNode = mind.data.find(node => node.isroot);
+            if (!rootNode) return 'Root node not found';
+
+            function traverse(node) {
+                var children = mind.data.filter(n => n.parentid === node.id);
+                var description = `${node.topic} has ${children.length} node${children.length === 1 ? '' : 's'}: `;
+                description += children.map(child => child.topic).join(', ');
+                children.forEach(child => {
+                    var childDescription = traverse(child);
+                    if (childDescription) {
+                        description += '\n' + childDescription;
+                    }
+                });
+                return description;
+            }
+
+            return traverse(rootNode);
+        }
+
+        
+        load_jsmind()
+        addNode("Hello World", "{{topic}}");
+        console.log(getReadableMindMap())
+    </script>
+</body>
+</html>
