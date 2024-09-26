@@ -6,120 +6,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SignUp</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        .custom-width {
-            width: 400px;
-            /* Define the same width for both forms */
-        }
-    </style>
 </head>
 
 <body class="bg-gray-900 text-white">
     <section class="flex items-center justify-center min-h-screen">
         <div
-            class="flex bg-gray-800 items-center justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-8 shadow-md rounded-lg custom-width">
-            <div class="xl:mx-auto xl:w-full p-4">
-                <div class="mb-2 flex justify-center"></div>
-                <h2 class="text-center text-2xl font-bold leading-tight">
-                    Create a free account
-                </h2>
-                <p class="mt-2 text-center text-sm text-gray-400">
-                    Already have an account? <a href="{{ url_for('signin') }}"
-                        class="font-semibold text-blue-500 hover:underline">Sign in</a>
-                </p>
-                <form class="mt-8" method="POST" action="#">
-                    <div class="space-y-5">
-                        <div>
-                            <label class="text-base font-medium">
-                                Username
-                            </label>
-                            <div class="mt-2">
-                                <input id="Username" placeholder="Username" type="text"
-                                    class="flex h-10 w-full rounded-md border border-gray-600 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50" />
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-base font-medium">
-                                Email address
-                            </label>
-                            <div class="mt-2">
-                                <input id="Email" placeholder="Email" type="email"
-                                    class="flex h-10 w-full rounded-md border border-gray-600 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50" />
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-base font-medium">
-                                Password
-                            </label>
-                            <div class="mt-2">
-                                <input id="Password" placeholder="Password" type="password"
-                                    class="flex h-10 w-full rounded-md border border-gray-600 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50" />
-                            </div>
-                        </div>
-                        <!-- Re-enter Password Field -->
-                        <div>
-                            <label class="text-base font-medium">
-                                Re-enter Password
-                            </label>
-                            <div class="mt-2">
-                                <input placeholder="Re-enter Password" type="password"
-                                    class="flex h-10 w-full rounded-md border border-gray-600 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50" />
-                            </div>
-                        </div>
-                        <div>
-                            <a onclick="saveData()">
-                                <button 
-                                    class="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-3.5 py-2.5 font-semibold leading-7 hover:bg-blue-700"
-                                    type="button">
-                                    Next
-                                </button>
-                            </a>
-                        </div>
+            class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold text-center">Create a free account</h2>
+            <p class="text-center text-sm text-gray-400 mt-2">
+                Already have an account? <a href="{{ url_for('signin') }}" class="text-blue-500 hover:underline font-semibold">Sign in</a>
+            </p>
+            
+            <form class="mt-8" method="POST" action="#">
+                <div class="space-y-6">
+                    <div>
+                        <label for="Username" class="block text-sm font-medium">Username</label>
+                        <input id="Username" type="text" placeholder="Username"
+                            class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md text-sm px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
                     </div>
-                </form>
-                <div class="mt-3 space-y-3">
-                    <button
-                        class="relative inline-flex w-full items-center justify-center rounded-md border border-gray-600 bg-transparent px-3.5 py-2.5 font-semibold text-gray-300 transition-all duration-200 hover:bg-gray-700 hover:text-white focus:bg-gray-100 focus:text-black focus:outline-none"
-                        type="button">
-                        <span class="mr-2 inline-block">
-                            <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                                class="h-6 w-6 text-rose-500">
-                                <path
-                                    d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z">
-                                </path>
-                            </svg>
-                        </span>
-                        Sign up with Google
-                    </button>
+                    <div>
+                        <label for="Email" class="block text-sm font-medium">Email address</label>
+                        <input id="Email" type="email" placeholder="Email"
+                            class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md text-sm px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                    <div>
+                        <label for="Password" class="block text-sm font-medium">Password</label>
+                        <input id="Password" type="password" placeholder="Password"
+                            class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md text-sm px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                    <div>
+                        <label for="ReenterPassword" class="block text-sm font-medium">Re-enter Password</label>
+                        <input id="ReenterPassword" type="password" placeholder="Re-enter Password"
+                            class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md text-sm px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                    <div>
+                        <button type="button" onclick="saveData()"
+                            class="w-full bg-blue-600 text-white rounded-md px-4 py-2 font-semibold hover:bg-blue-700">
+                            Next
+                        </button>
+                    </div>
                 </div>
+            </form>
+
+            <div class="mt-6">
+                <button class="w-full flex items-center justify-center bg-transparent border border-gray-600 rounded-md px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white">
+                    <svg class="h-5 w-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z"></path>
+                    </svg>
+                    Sign up with Google
+                </button>
             </div>
         </div>
     </section>
-<script>
-    function getCookie(name) {
-          var cookies = document.cookie.split(';');
-          for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            if (cookie.startsWith(name + '=')) {
-              return cookie.substring(name.length + 1);
+
+    <script>
+        function getCookie(name) {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    return cookie.substring(name.length + 1);
+                }
             }
-          }
-          return null;
+            return null;
         }
-    function saveData(){
-    var Name = document.getElementById('Username').value;
-    var Email = document.getElementById('Email').value;
-    var Password = document.getElementById('Password').value;
-    document.cookie = "username=" + Name + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-    document.cookie = "email=" + Email + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-    document.cookie = "password=" + Password + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-    
-    alert(getCookie("username"))
-    alert(getCookie("email"))
-    alert(getCookie("password"))
-    window.location.href="{{ url_for('postSign') }}"
-    }
-</script>
+
+        function saveData() {
+            var Name = document.getElementById('Username').value;
+            var Email = document.getElementById('Email').value;
+            var Password = document.getElementById('Password').value;
+            document.cookie = "username=" + Name + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+            document.cookie = "email=" + Email + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+            document.cookie = "password=" + Password + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+
+            alert(getCookie("username"));
+            alert(getCookie("email"));
+            alert(getCookie("password"));
+            window.location.href = "{{ url_for('postSign') }}";
+        }
+    </script>
 </body>
 
 </html>
