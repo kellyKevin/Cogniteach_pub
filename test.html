@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+            font-family: 'Montserrat', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <nav class="flex justify-center items-center h-16 bg-gray-800">
+        <div class="text-green-400 text-2xl font-bold">CogniTeach</div>
+    </nav>
+    
+    <div class="container mx-auto p-6 bg-gray-900 rounded-lg mt-6 max-w-4xl">
+        <h1 class="text-3xl font-bold text-green-400 underline">Dashboard</h1>
+        <p id="Name" class="mt-4">Welcome</p>
+        <p id="Age">Age:</p>
+        <p id="Experience">Academic Experience:</p>
+        <p id="Language">Medium of Instruction:</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="bg-gray-800 p-4 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-green-400 underline">Analysis</h2>
+                <h4 class="mt-2">Understanding Level</h4>
+                <div id="understand" class="loading-bar">
+                    <div id="progress1" class="progress h-4 bg-green-500 rounded-lg transition-all duration-500"></div>
+                    <div id="percentage1" class="percentage absolute text-center text-white font-bold">0%</div>
+                </div>
+
+                <h4 class="mt-4">Understanding of Concepts</h4>
+                <div id="concept" class="loading-bar">
+                    <div id="progress2" class="progress h-4 bg-green-500 rounded-lg transition-all duration-500"></div>
+                    <div id="percentage2" class="percentage absolute text-center text-white font-bold">0%</div>
+                </div>
+
+                <h4 class="mt-4">Understanding of Medium</h4>
+                <div id="language" class="loading-bar">
+                    <div id="progress3" class="progress h-4 bg-green-500 rounded-lg transition-all duration-500"></div>
+                    <div id="percentage3" class="percentage absolute text-center text-white font-bold">0%</div>
+                </div>
+
+                <p id="mood" class="mt-4">Last mood:</p>
+                <p id="state">Long Term Mental State:</p>
+                <p id="attention">Overall Attention span: <span id="attentionValue"></span></p>
+            </div>
+
+            <div class="bg-gray-800 p-4 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-green-400 underline">Courses</h2>
+                <a class="mt-4 block text-center bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors" href="{{url_for('ss_setup')}}">Create Course</a>
+                <div id="lol" class="mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        function getCookie(name) {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    return cookie.substring(name.length + 1);
+                }
+            }
+            return null;
+        }
+
+        function updateLoadingBar(percentage, progress, percentagebox) {
+            var progressBar = document.getElementById(progress);
+            var percentageText = document.getElementById(percentagebox);
+
+            percentage = Math.min(100, Math.max(0, percentage));
+            progressBar.style.width = percentage + '%';
+            percentageText.innerText = percentage + '%';
+        }
+
+        var understand = Math.floor(Number(getCookie("understand")));
+        var concept = Number(getCookie("concept_rating")) * 10;
+        var language = Number(getCookie("lang_rating")) * 10;
+        updateLoadingBar(understand, 'progress1', 'percentage1');
+        updateLoadingBar(concept, 'progress2', 'percentage2');
+        updateLoadingBar(language, 'progress3', 'percentage3');
+
+        var name = getCookie("name");
+        var age = getCookie("age");
+        var academic = getCookie("academic");
+        var lang = getCookie("language");
+        var mood = getCookie("mood");
+        var state = getCookie("mentalstate");
+        var attention = getCookie("attention");
+
+        document.getElementById('Name').innerText = "Welcome " + name + "!";
+        document.getElementById('Age').innerText = "Age: " + age;
+        document.getElementById('Language').innerText = "Medium of instruction: " + lang;
+        document.getElementById('Experience').innerText = "Academic Qualifications: " + academic;
+        document.getElementById('mood').innerText = "Last Mood: " + mood;
+        document.getElementById('state').innerText = "Long Term Mental State: " + state;
+        document.getElementById('attentionValue').innerText = " " + getCookie("attention") + " Seconds";
+
+        function getCookie2(name) {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    var jsonData = decodeURIComponent(cookie.substring(name.length + 1));
+                    return JSON.parse(jsonData);
+                }
+            }
+            return null;
+        }
+        
+        var num_courses = getCookie("lessons");
+        const start = 1;
+        const end = Number(num_courses) + 1;
+        var parent = document.getElementById("lol");
+        
+        for (let i = start; i < end; i++) {
+            var cookietopic = getCookie2(i.toString());
+            let topic = document.createElement('h3');
+            topic.innerText = cookietopic.topic;
+            parent.appendChild(topic);
+            let subtopics_holder = document.createElement("ul");
+            parent.appendChild(subtopics_holder);
+            cookietopic.subtopics.forEach(function (element) {
+                let subtopic = document.createElement("p");
+                let subtopic_redir = document.createElement("a");
+                subtopic.innerText = element;
+                $.ajax({
+                    type: "POST",
+                    url: "/get_url",
+                    data: { element: element },
+                    success: function (response) {
+                        subtopic_redir.href = response.url;
+                    }
+                });
+                subtopic_redir.innerText = "Continue from here";
+                subtopic_redir.className = "text-blue-500 hover:underline";
+                subtopics_holder.appendChild(subtopic);
+                subtopics_holder.appendChild(subtopic_redir);
+            });
+        };
+    </script>
+</body>
+</html>

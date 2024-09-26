@@ -1,187 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Session setup</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #1E1E1E; /* Dark background */
-            color: #FFFFFF; /* White text color */
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar {
-            background-color: #222; /* Dark background for navbar */
-            padding: 10px 0;
-        }
-        .navbar-brand {
-            color: #70E72B; /* Greenish color for brand */
-            font-weight: normal;
-            font-size: 24px; /* Adjust font size */
-            text-align: center; /* Center the brand name */
-            width: 100%; /* Make the brand name occupy full width */
-        }
-        .form-container {
-            background-color: #333; /* Dark gray background for form */
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            margin-top: 20px;
-        }
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #444; /* Dark gray input background */
-            color: #FFFFFF; /* White text color */
-            box-sizing: border-box;
-        }
-        button[type="submit"] {
-            background-color: #70E72B; /* Greenish color */
-            color: #FFFFFF; /* White text color */
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button[type="submit"]:hover {
-            background-color: #58BB1E; /* Darker greenish color on hover */
-        }
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropbtn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 16px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            text-align: left;
-            width: 100%;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f1f1f1;
-            min-width: 200px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-
-        .dropdown-content .option-container {
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            color: black;
-        }
-
-        .dropdown-content .option-container:hover {
-            background-color: #ddd;
-        }
-
-        .dropdown-content .option-title {
-            font-weight: bold;
-            display: block;
-        }
-
-        .dropdown-content .option-description {
-            font-size: 12px;
-            color: gray;
-            display: block;
-            margin-top: 4px;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .dropdown:hover .dropbtn {
-            background-color: #3e8e41;
-        }
-
-        .dropbtn .option-description {
-            font-size: 12px;
-            color: white;
-            margin-top: 4px;
-            display: block;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for("dashboard")}}">COGNITEACH</a>
+
+<body class="bg-gray-900 text-white font-sans">
+    <nav class="bg-gray-800 py-4">
+        <div class="container mx-auto">
+            <a class="text-3xl text-green-400 font-normal text-center block" href="{{ url_for('dashboard') }}">COGNITEACH</a>
         </div>
     </nav>
 
-    <div class="container form-container">
-        <h1>Course setup</h1>
-        <form action="{{ url_for("ss_setup") }}" method="post">
-            <div class="dropdown">
-                <button type="button" id="dropdownBtn" class="dropbtn">Dropdown</button>
-                <div class="dropdown-content" id="dropdownList">
-                    <a href="#" class="option-container" onclick="selectOption('Aiko', 'For Students who need emotional support, particularly those who might be anxious or sensitive', this)">
-                        <span class="option-title">Aiko</span>
-                        <span class="option-description">For Students who need emotional support, particularly those who might be anxious or sensitive</span>
-                    </a>
-                    <a href="#" class="option-container" onclick="selectOption('Amara', 'For Students who thrive in a competitive, goal-oriented environment and need a little extra push.', this)">
-                        <span class="option-title">Amara</span>
-                        <span class="option-description">For Students who thrive in a competitive, goal-oriented environment and need a little extra push.</span>
-                    </a>
-                    <a href="#" class="option-container" onclick="selectOption('Diego', 'For Advanced learners or those who enjoy critical thinking and problem-solving challenges.', this)">
-                        <span class="option-title">Diego</span>
-                        <span class="option-description">For Advanced learners or those who enjoy critical thinking and problem-solving challenges.</span>
-                    </a>
-                    <a href="#" class="option-container" onclick="selectOption('Elara', 'Analytical & Critical Thinking', this)">
-                        <span class="option-title">Elara</span>
-                        <span class="option-description">For Students who appreciate context, background, and the practical application of knowledge.</span>
-                    </a>
-                    <a href="#" class="option-container" onclick="selectOption('Lena', 'For Students who prefer a creative, hands-on approach to learning and enjoy exploring different ways to solve problems.', this)">
-                        <span class="option-title">Lena</span>
-                        <span class="option-description">For Students who prefer a creative, hands-on approach to learning and enjoy exploring different ways to solve problems.</span>
-                    </a>
+    <div class="container mx-auto mt-10">
+        <div class="bg-gray-700 p-8 rounded-lg shadow-lg">
+            <h1 class="text-2xl mb-6 font-semibold">Course Setup</h1>
+            <form action="{{ url_for('ss_setup') }}" method="post" class="space-y-4">
+                <div class="relative">
+                    <button type="button" id="dropdownBtn" class="w-full bg-green-500 text-white py-3 px-4 rounded-lg focus:outline-none text-left">
+                        Dropdown
+                    </button>
+                    <div class="absolute bg-white text-black mt-2 rounded-lg shadow-lg w-full hidden" id="dropdownList">
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-200" onclick="selectOption('Aiko', 'For Students who need emotional support, particularly those who might be anxious or sensitive', this)">
+                            <span class="font-bold">Aiko</span>
+                            <span class="text-sm text-gray-600 block">For Students who need emotional support, particularly those who might be anxious or sensitive</span>
+                        </a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-200" onclick="selectOption('Amara', 'For Students who thrive in a competitive, goal-oriented environment and need a little extra push.', this)">
+                            <span class="font-bold">Amara</span>
+                            <span class="text-sm text-gray-600 block">For Students who thrive in a competitive, goal-oriented environment and need a little extra push.</span>
+                        </a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-200" onclick="selectOption('Diego', 'For Advanced learners or those who enjoy critical thinking and problem-solving challenges.', this)">
+                            <span class="font-bold">Diego</span>
+                            <span class="text-sm text-gray-600 block">For Advanced learners or those who enjoy critical thinking and problem-solving challenges.</span>
+                        </a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-200" onclick="selectOption('Elara', 'For Students who appreciate context, background, and the practical application of knowledge.', this)">
+                            <span class="font-bold">Elara</span>
+                            <span class="text-sm text-gray-600 block">For Students who appreciate context, background, and the practical application of knowledge.</span>
+                        </a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-200" onclick="selectOption('Lena', 'For Students who prefer a creative, hands-on approach to learning and enjoy exploring different ways to solve problems.', this)">
+                            <span class="font-bold">Lena</span>
+                            <span class="text-sm text-gray-600 block">For Students who prefer a creative, hands-on approach to learning and enjoy exploring different ways to solve problems.</span>
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <input type="hidden" name="dropdown" id="dropdown" value="">
-            <br><br>
-            <input type="text" placeholder="Topic" name="topic">
-            <textarea type="text" placeholder="Syllabus" name="syllabus"></textarea>
-            <input type="text" placeholder="External Url for Marking Scheme" name="url">
-            <input type="text" placeholder="Extra Study Material" name="material">
-            <input type="number" placeholder="Total Num of classes" name="classnum">
-            <input type="text" placeholder="Basic Exam Description" name="exam">
-            <button type="submit">Let's Go!</button>
-        </form>
+                <input type="hidden" name="dropdown" id="dropdown" value="">
+                <input type="text" placeholder="Topic" name="topic" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400">
+                <textarea placeholder="Syllabus" name="syllabus" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400"></textarea>
+                <input type="text" placeholder="External Url for Marking Scheme" name="url" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400">
+                <input type="text" placeholder="Extra Study Material" name="material" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400">
+                <input type="number" placeholder="Total Num of classes" name="classnum" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400">
+                <input type="text" placeholder="Basic Exam Description" name="exam" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400">
+                <button type="submit" class="bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-colors">
+                    Let's Go!
+                </button>
+            </form>
+        </div>
     </div>
+
     <script>
-         let lastSelectedElement = null;
+        let lastSelectedElement = null;
 
-function selectOption(option, description, element) {
-    const dropdownBtn = document.getElementById('dropdownBtn');
-    const dropdownInput = document.getElementById('dropdown');
-    const dropdownList = document.getElementById('dropdownList');
+        function selectOption(option, description, element) {
+            const dropdownBtn = document.getElementById('dropdownBtn');
+            const dropdownInput = document.getElementById('dropdown');
+            const dropdownList = document.getElementById('dropdownList');
 
-    // If there was a previously selected option, add it back to the list
-    if (lastSelectedElement) {
-        dropdownList.appendChild(lastSelectedElement);
-    }
+            if (lastSelectedElement) {
+                dropdownList.appendChild(lastSelectedElement);
+            }
 
-    // Update button text with selected option and its description
-    dropdownBtn.innerHTML = `<span class="option-title">${option}</span><span class="option-description">${description}</span>`;
-    dropdownInput.value = option;
+            dropdownBtn.innerHTML = `<span class="font-bold">${option}</span><span class="text-sm block">${description}</span>`;
+            dropdownInput.value = option;
+            lastSelectedElement = element;
+            element.remove();
+        }
 
-    // Remove the selected element from the list
-    lastSelectedElement = element;
-    element.remove();
-}
+        document.getElementById('dropdownBtn').addEventListener('click', function() {
+            document.getElementById('dropdownList').classList.toggle('hidden');
+        });
     </script>
 </body>
+
 </html>

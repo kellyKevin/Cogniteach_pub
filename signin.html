@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 
 <head>
@@ -36,7 +36,7 @@
                                 <label class="text-base font-medium">
                                     Password
                                 </label>
-                                <a class="text-sm font-semibold hover:underline" title="" href="#">
+                                <a class="text-sm font-semibold text-blue-500 hover:underline" title="" href="#">
                                     Forgot password?
                                 </a>
                             </div>
@@ -72,30 +72,36 @@
             </div>
         </div>
     </section>
+
 <script>
     function getCookie(name) {
-          var cookies = document.cookie.split(';');
-          for (var i = 0; i < cookies.length; i++) {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
             var cookie = cookies[i].trim();
             if (cookie.startsWith(name + '=')) {
-              return cookie.substring(name.length + 1);
+                return cookie.substring(name.length + 1);
             }
-          }
-          return null;
         }
-    function check(){
-            var email=document.getElementById("email").value;
-            var password=document.getElementById("password").value;
-            if (getCookie("email")==email){
-                if(getCookie("password")==password){
-                    console.log("hello")
-                    window.location.href = "{{ url_for("dashboard")}}";
-                }
-                else{alert("INVALID PASSWORD")}
+        return null;
+    }
+
+    function check() {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        if (getCookie("email") == email) {
+            if (getCookie("password") == password) {
+                console.log("hello");
+                window.location.href = "{{ url_for('dashboard') }}";
+            } else {
+                alert("INVALID PASSWORD");
             }
-            else{alert("INVALID EMAIL");console.log(email)}
+        } else {
+            alert("INVALID EMAIL");
+            console.log(email);
+        }
     }
 </script>
+
 </body>
 
 </html>
