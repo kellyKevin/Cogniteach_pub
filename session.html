@@ -4,72 +4,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Session</title>
-    <script src="{{ url_for('static', filename='avataaars.js') }}"></script>
+    <title>Session Interface</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/roughjs@4.5.2/bundled/rough.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsmind@0.8.5/style/jsmind.css" />
-    <script
-        src="https://cdn.jsdelivr.net/npm/microsoft-cognitiveservices-speech-sdk@latest/distrib/browser/microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsmind@0.8.5/es6/jsmind.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsmind@0.8.5/es6/jsmind.draggable-node.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #1f2937; /* Dark background */
+        }
+
+        .gradient-text {
+            background-image: linear-gradient(45deg, #4158d0, #c850c0, #ffcc70);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        #webcam {
+            border: 2px solid #e0ecec; /* Highlighted border */
+            border-radius: 2px;
+            max-height: 120px; /* Reduced webcam height */
+            max-width: 160px; /* Reduced webcam width */
+        }
+
+        /* Removed overflow and max-height for chat history and notes */
+        #history_container,
+        #notes_container {
+            /* No longer restricted */
+        }
+
+        #whiteboard {
+            max-height: 150px; /* Retained max height for the whiteboard */
+            width: 100%; /* Full width */
+        }
+
+        /* Removed the overflow restriction for the canvas container */
+        .canvas-container {
+            width: 100%; /* Full width */
+        }
+
+        /* Mindmap height */
+        #jsmind_container {
+            height: 80px; /* Reduced Mindmap height */
+        }
+
+        .image-container img {
+            width: 80px; /* Adjusted size */
+            height: 60px; /* Adjusted size */
+        }
+
+        .icon-button {
+            width: 24px; /* Smaller button width */
+            height: 24px; /* Smaller button height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.375rem; /* Rounded corners */
+            transition: background-color 0.2s;
+        }
+
+        .icon-button:hover {
+            background-color: rgba(75, 113, 211, 0.2); /* Light green hover effect */
+        }
+
+        .icon-button i {
+            font-size: 0.8rem; /* Adjusted icon size */
+        }
+
+        @media (max-width: 640px) {
+            #webcam {
+                max-height: 80px; /* Adjust for small screens */
+            }
+
+            #whiteboard,
+            #jsmind_container {
+                max-height: 50px; /* Further reduce for small screens */
+            }
+
+            .icon-button {
+                width: 20px; /* Even smaller button width */
+                height: 20px; /* Even smaller button height */
+            }
+
+            .icon-button i {
+                font-size: 0.7rem; /* Smaller icon size */
+            }
+        }
+
+        /* Custom Flexbox Layout */
+        .flex-layout {
+            display: flex;
+            justify-content: start; /* Align items to the start */
+            gap: 10px; /* Space between elements */
+        }
+
+        .chat-container {
+            flex: 1; /* Allow chat section to grow */
+        }
+
+        /* Increase font sizes */
+        h1 {
+            font-size: 2rem; /* Increased font size for the title */
+        }
+
+        h2 {
+            font-size: 1.25rem; /* Increased font size for section titles */
+        }
+
+        .text-xs {
+            font-size: 0.875rem; /* Increased size for smaller text */
+        }
+
+        .text-sm {
+            font-size: 1rem; /* Increased size for small text */
+        }
+    </style>
 </head>
 
-<body class="bg-gray-900 text-white">
-    <!-- Whiteboard Container -->
-    <div class="overflow-scroll h-96 w-full mx-auto">
-        <canvas id="whiteboard" width="1000" height="1000"
-            class="bg-gray-100 border border-gray-400 rounded-md"></canvas>
-    </div>
+<body class="flex flex-col h-screen">
+    <div class="relative flex-1 container mx-auto p-2">
+        <h1 class="text-lg font-bold text-center gradient-text mb-2">Session Overview</h1>
 
-    <!-- Interaction Container -->
-    <div id="interaction_container"
-        class="bg-gray-800 border border-green-500 rounded-lg p-6 fixed right-4 top-1/2 transform -translate-y-1/2 shadow-lg w-80">
-        <div id="userInput" class="flex items-center space-x-2">
-            <input id="userResponse" type="text" placeholder="Enter response here...."
-                class="flex-grow bg-gray-700 text-gray-200 border border-green-500 rounded-l-lg px-3 py-2 focus:outline-none focus:ring focus:ring-green-400">
-            <button id="userSpeechToText"
-                class="w-12 h-12 bg-green-600 text-white flex items-center justify-center rounded-r-lg hover:bg-green-700">
-                <i class="fas fa-microphone"></i>
-            </button>
-            <button id="userSubmit"
-                class="w-12 h-12 bg-green-600 text-white flex items-center justify-center rounded-full hover:bg-green-700">
-                <i class="fas fa-paper-plane"></i>
-            </button>
+        <div class="flex-layout"> <!-- Flex layout for webcam and chat -->
+            <!-- Webcam Feed -->
+            <div class="bg-gray-800 rounded-lg shadow-lg p-2">
+                <h2 class="text-sm font-semibold text-green-400 gradient-text">Webcam Feed</h2>
+                <video id="webcam" autoplay class="w-full rounded-lg"></video>
+            </div>
+            <!-- Chat Interaction -->
+            <div class="chat-container bg-gray-800 rounded-lg shadow-lg p-2">
+                <h2 class="text-sm font-semibold text-green-400 gradient-text">Chat Interaction</h2>
+                <div class="flex items-center space-x-1 mb-1">
+                    <div class="flex items-center">
+                        <i class="fas fa-robot text-green-400"></i>
+                        <span class="text-green-400 text-xs">AI:</span>
+                    </div>
+                    <input id="userResponse" type="text" placeholder="Type your response..."
+                        class="flex-grow p-1 text-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 text-xs">
+                    <button id="userSpeechToText" class="icon-button bg-green-500 text-white hover:bg-green-600">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button id="userSubmit" class="icon-button bg-green-500 text-white hover:bg-green-600">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div id="history_container" class="text-xs text-gray-300"></div> <!-- No longer scrolling -->
+            </div>
         </div>
-        <div id="history_container" class="mt-4 overflow-y-auto h-64 border-t border-gray-700 pt-2"></div>
-    </div>
 
-    <!-- Notes and Images Container -->
-    <div id="notes_container" class="mt-4">
-        <p id="notes" class="text-sm"></p>
-    </div>
+        <!-- Whiteboard -->
+        <div class="bg-gray-800 rounded-lg shadow-lg p-2 sm:col-span-2 mt-2">
+            <h2 class="text-sm font-semibold text-green-400 gradient-text">Whiteboard</h2>
+            <div class="canvas-container">
+                <canvas id="whiteboard" class="bg-gray-100 border border-gray-400"></canvas>
+            </div>
+        </div>
 
-    <div id="images_container" class="flex justify-center space-x-4 mt-6">
-        <img id="image1" src="" alt="{{ url_for('static', filename='logo.jpeg') }}"
-            class="rounded-lg border-2 border-green-500 w-36 h-36 object-cover">
-        <img id="image2" src="" alt="{{ url_for('static', filename='logo.jpeg') }}"
-            class="rounded-lg border-2 border-green-500 w-36 h-36 object-cover">
-        <img id="image3" src="" alt="{{ url_for('static', filename='logo.jpeg') }}"
-            class="rounded-lg border-2 border-green-500 w-36 h-36 object-cover">
-    </div>
+        <!-- Notes -->
+        <div class="bg-gray-800 rounded-lg shadow-lg p-2 sm:col-span-2 mt-2">
+            <h2 class="text-sm font-semibold text-green-400 gradient-text">Notes</h2>
+            <div id="notes_container" class="flex flex-col"> <!-- No longer scrolling -->
+                <p id="notes" class="text-xs text-gray-300 mb-1"></p>
+                <div id="images_container" class="flex justify-center space-x-1 image-container">
+                    <img id="image1" src="" alt="Image 1" class="rounded-md border-2 border-green-500">
+                    <img id="image2" src="" alt="Image 2" class="rounded-md border-2 border-green-500">
+                    <img id="image3" src="" alt="Image 3" class="rounded-md border-2 border-green-500">
+                </div>
+            </div>
+        </div>
 
-    <!-- Avatar and Mindmap -->
-    <div class="flex justify-center mt-8">
-        <img id="avatar" height="200" width="200" class="rounded-full border-2 border-green-500">
-    </div>
-
-    <div id="jsmind_container" class="mx-auto mt-4 w-96 h-96 border border-gray-400 bg-gray-200"></div>
-
-    <div class="mt-4 mx-auto w-full max-w-lg">
-        <video id="webcam" autoplay class="rounded-lg shadow-lg w-full"></video>
+        <!-- Mindmap -->
+        <div class="bg-gray-800 rounded-lg shadow-lg p-2 sm:col-span-2 mt-2">
+            <h2 class="text-sm font-semibold text-green-400 gradient-text">Mindmap</h2>
+            <div id="jsmind_container" class="w-full h-16 border border-gray-400 bg-gray-200"></div>
+        </div>
     </div>
 
     <script type="module">
+
 
         import AudioMotionAnalyzer from 'https://cdn.skypack.dev/audiomotion-analyzer';
         function getCookie(name) {
@@ -712,7 +825,9 @@
         load_jsmind()
         addNode("Hello World", "{{topic}}");
         console.log(getReadableMindMap())
+        
     </script>
+
 </body>
 
 </html>

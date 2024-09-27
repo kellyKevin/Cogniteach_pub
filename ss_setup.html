@@ -6,59 +6,130 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Session Setup</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for dropdown transition */
+        .dropdown-transition {
+            transition: max-height 0.2s ease-in-out;
+        }
+
+        /* Gradient text style */
+        .gradient-text {
+            background-image: linear-gradient(45deg, #4158d0, #c850c0, #ffcc70);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 1.8rem; /* Reduced font size */
+        }
+
+        body {
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            overflow: hidden; /* Prevent scrolling */
+            font-family: 'Roboto', sans-serif; /* Set a default font */
+        }
+
+        .container {
+            padding: 15px; /* Reduce padding */
+            max-width: 600px; /* Set max width for better layout */
+            margin: auto; /* Center the container */
+        }
+
+        .navbar, .footer {
+            padding: 10px; /* Reduce padding for nav and footer */
+        }
+
+        button, input, textarea {
+            font-size: 0.9rem; /* Scale down font sizes for form elements */
+        }
+
+        form {
+            display: flex;
+            flex-direction: column; /* Align elements vertically */
+            gap: 12px; /* Add space between elements */
+        }
+
+        input, textarea, button {
+            width: 100%; /* Make inputs and buttons full width */
+            border-radius: 8px; /* Rounded corners for all inputs */
+        }
+
+        input[type="url"], input[type="text"], input[type="number"], textarea {
+            height: 40px; /* Set a fixed height for inputs */
+            padding: 10px; /* Padding inside inputs */
+            background-color: #2d3748; /* Dark background for inputs */
+            color: white; /* Text color for inputs */
+            border: none; /* Remove border */
+        }
+
+        button {
+            height: 45px; /* Set a fixed height for buttons */
+            background-color: #48bb78; /* Green background for buttons */
+            color: white; /* White text color for buttons */
+            transition: background-color 0.3s; /* Smooth background transition */
+        }
+
+        button:hover {
+            background-color: #38a169; /* Darker green on hover */
+        }
+    </style>
 </head>
 
-<body class="bg-gray-900 text-white font-sans">
-    <nav class="bg-gray-800 py-4">
-        <div class="container mx-auto">
-            <a class="text-3xl text-green-400 font-normal text-center block" href="{{ url_for('dashboard') }}">COGNITEACH</a>
+<body class="bg-gray-900 text-white">
+    <nav class="bg-gray-800 py-4 shadow-lg navbar">
+        <div class="container">
+            <a class="text-3xl gradient-text font-semibold text-center block" href="{{ url_for('dashboard') }}">COGNITEACH</a>
         </div>
     </nav>
 
-    <div class="container mx-auto mt-10">
-        <div class="bg-gray-700 p-8 rounded-lg shadow-lg">
-            <h1 class="text-2xl mb-6 font-semibold">Course Setup</h1>
-            <form action="{{ url_for('ss_setup') }}" method="post" class="space-y-4">
+    <div class="container mt-10">
+        <div class="bg-gray-700 p-4 rounded-lg shadow-lg">
+            <h1 class="text-3xl mb-6 font-semibold text-center">Course Setup</h1>
+            <form action="{{ url_for('ss_setup') }}" method="post" onsubmit="return validateForm()">
                 <div class="relative">
-                    <button type="button" id="dropdownBtn" class="w-full bg-green-500 text-white py-3 px-4 rounded-lg focus:outline-none text-left">
-                        Dropdown
+                    <button type="button" id="dropdownBtn" class="bg-green-500 text-white py-3 px-4 rounded-lg focus:outline-none text-left shadow w-full">
+                        Select a Student Type
                     </button>
-                    <div class="absolute bg-white text-black mt-2 rounded-lg shadow-lg w-full hidden" id="dropdownList">
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-200" onclick="selectOption('Aiko', 'For Students who need emotional support, particularly those who might be anxious or sensitive', this)">
+                    <div class="absolute bg-gray-800 text-white mt-2 rounded-lg shadow-lg w-full hidden dropdown-transition" id="dropdownList">
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-600" onclick="selectOption('Aiko', 'For Students who need emotional support.', this)">
                             <span class="font-bold">Aiko</span>
-                            <span class="text-sm text-gray-600 block">For Students who need emotional support, particularly those who might be anxious or sensitive</span>
+                            <span class="text-sm text-gray-400 block">For Students who need emotional support.</span>
                         </a>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-200" onclick="selectOption('Amara', 'For Students who thrive in a competitive, goal-oriented environment and need a little extra push.', this)">
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-600" onclick="selectOption('Amara', 'For Students who thrive in a competitive, goal-oriented environment.', this)">
                             <span class="font-bold">Amara</span>
-                            <span class="text-sm text-gray-600 block">For Students who thrive in a competitive, goal-oriented environment and need a little extra push.</span>
+                            <span class="text-sm text-gray-400 block">For Students who thrive in competition.</span>
                         </a>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-200" onclick="selectOption('Diego', 'For Advanced learners or those who enjoy critical thinking and problem-solving challenges.', this)">
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-600" onclick="selectOption('Diego', 'For Advanced learners or those who enjoy critical thinking and problem-solving challenges.', this)">
                             <span class="font-bold">Diego</span>
-                            <span class="text-sm text-gray-600 block">For Advanced learners or those who enjoy critical thinking and problem-solving challenges.</span>
+                            <span class="text-sm text-gray-400 block">For Advanced learners who enjoy challenges.</span>
                         </a>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-200" onclick="selectOption('Elara', 'For Students who appreciate context, background, and the practical application of knowledge.', this)">
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-600" onclick="selectOption('Elara', 'For Students who appreciate context and practical application of knowledge.', this)">
                             <span class="font-bold">Elara</span>
-                            <span class="text-sm text-gray-600 block">For Students who appreciate context, background, and the practical application of knowledge.</span>
+                            <span class="text-sm text-gray-400 block">For Students who appreciate practical applications.</span>
                         </a>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-200" onclick="selectOption('Lena', 'For Students who prefer a creative, hands-on approach to learning and enjoy exploring different ways to solve problems.', this)">
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-600" onclick="selectOption('Lena', 'For Students who prefer a creative, hands-on approach to learning.', this)">
                             <span class="font-bold">Lena</span>
-                            <span class="text-sm text-gray-600 block">For Students who prefer a creative, hands-on approach to learning and enjoy exploring different ways to solve problems.</span>
+                            <span class="text-sm text-gray-400 block">For Students who prefer hands-on learning.</span>
                         </a>
                     </div>
                 </div>
                 <input type="hidden" name="dropdown" id="dropdown" value="">
-                <input type="text" placeholder="Topic" name="topic" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400">
-                <textarea placeholder="Syllabus" name="syllabus" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400"></textarea>
-                <input type="text" placeholder="External Url for Marking Scheme" name="url" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400">
-                <input type="text" placeholder="Extra Study Material" name="material" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400">
-                <input type="number" placeholder="Total Num of classes" name="classnum" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400">
-                <input type="text" placeholder="Basic Exam Description" name="exam" class="w-full p-3 rounded-lg bg-gray-800 border-none text-white placeholder-gray-400">
-                <button type="submit" class="bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-colors">
-                    Let's Go!
-                </button>
+                <input type="text" placeholder="Course Topic" name="topic" required>
+                <textarea placeholder="Syllabus" name="syllabus" required rows="3"></textarea>
+                <input type="url" placeholder="External URL for Marking Scheme" name="url" required>
+                <input type="text" placeholder="Extra Study Material" name="material">
+                <input type="number" placeholder="Total Number of Classes" name="classnum" required min="1">
+                <input type="text" placeholder="Basic Exam Description" name="exam">
+                <button type="submit">Let's Go!</button>
             </form>
         </div>
     </div>
+
+    <footer class="bg-gray-800 py-4 mt-10 footer">
+        <div class="container text-center">
+            <p class="text-gray-400">© 2024 COGNITEACH. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script>
         let lastSelectedElement = null;
@@ -76,11 +147,30 @@
             dropdownInput.value = option;
             lastSelectedElement = element;
             element.remove();
+            dropdownList.classList.add('hidden'); // Hide dropdown after selection
         }
 
-        document.getElementById('dropdownBtn').addEventListener('click', function() {
-            document.getElementById('dropdownList').classList.toggle('hidden');
+        document.getElementById('dropdownBtn').addEventListener('click', function () {
+            const dropdownList = document.getElementById('dropdownList');
+            dropdownList.classList.toggle('hidden');
         });
+
+        window.onclick = function (event) {
+            if (!event.target.matches('#dropdownBtn') && !event.target.matches('.dropdown-transition *')) {
+                const dropdowns = document.getElementsByClassName("dropdown-transition");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (!openDropdown.classList.contains('hidden')) {
+                        openDropdown.classList.add('hidden');
+                    }
+                }
+            }
+        }
+
+        function validateForm() {
+            // Custom validation logic (if any)
+            return true; // Allow submission
+        }
     </script>
 </body>
 
